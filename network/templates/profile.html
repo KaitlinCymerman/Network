@@ -1,0 +1,64 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% block script %}
+    <script src="{% static 'network/index.js' %}"></script>
+{% endblock %}
+
+<div class="card p-4">
+    <div>
+        <h3 class="ml-3" style="display: inline;">{{ username.username }}</h3>
+        <div class="ml-3" style="display: inline;">
+            <div class="border border-light rounded p-2" style="display: inline;">Followers: {{ followers }}</div>
+            <div class="border border-light rounded ml-2 p-2" style="display: inline;">Following: {{ following }}</div>
+
+            <form style="display: inline;" action="{% url 'profile' username.id %}" method="POST">
+            {% if user.id != username.id %}
+                {% csrf_token %}
+                {% if follow_button == "Follow" %}
+                    <button type="submit" class="btn btn-primary" name="follow_button" value="Follow">Follow</button>
+                {% else %}
+                    <button type="submit" class="btn btn-danger" name="follow_button" value="Unfollow">Unfollow</button>
+                {% endif %}
+            {% else %}
+            {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
+    <div>
+        {% for post in page_obj %}
+            <div class="border border-dark rounded p-4 mt-2">
+                <div id="post-{{post.id}}" class="row m-2">{{ post.post }}</div>
+                <div class="row m-2">{{ post.date }}</div>
+
+                <span id="like-button-{{post.id}}" onclick="like('{{ post.id }}')"><i class="fa fa-heart-o" aria-hidden="true" ></i></span>
+                <div id="like-count-{{post.id}}" class="d-inline p-2">{{ post.likes }}</div>
+
+                {% if user.id == username.id %}
+                <div class="text-primary" id="edit" onclick="edit('{{ post.id }}')">Edit</div>
+                {% else %}
+                {% endif %}
+                <textarea class="form-control m-2" name="edit-post" id="edit-post-{{post.id}}" style="display:none;"></textarea>
+                <button typer= "submit" id="edit-btn-{{post.id}}" class="btn btn-primary" style="display:none;">Save</button>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_next %}
+        <a class="page-item" href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+
+    {% if page_obj.has_previous %}
+        <a class="page-item" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+</div>
+
+{% endblock %}
