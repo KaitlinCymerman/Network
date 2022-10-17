@@ -1,0 +1,39 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'network/index.js' %}"></script>
+{% endblock %}
+
+<div class="container m-2">
+    <h3>Following:</h3>
+</div>
+
+<div class="card p-2">
+    {% for post in page_obj %}
+        <div class="border border-dark rounded p-4 mt-2">
+            <h4 class="card-title"><a href="{% url 'profile' post.user.id %}">{{ post.user }}</a></h4>
+            <div class="row m-2">{{ post.post }}</div>
+            <div class="row m-2">{{ post.date }}</div>
+
+            <span id="like-button-{{post.id}}" onclick="like('{{ post.id }}')"><i class="fa fa-heart-o" aria-hidden="true" ></i></span>
+            <div id="like-count-{{post.id}}" class="d-inline p-2">{{ post.likes }}</div>
+        </div>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+
+    {% if page_obj.has_previous %}
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+
+</div>
+
+{% endblock %}
